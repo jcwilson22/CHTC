@@ -1,0 +1,31 @@
+universe        = vanilla
+executable      = run_extract_pixels.sh
+
+# One argument per job (one AVIRIS-NG image)
+arguments       = $(IMAGE) $(Process)
+
+# Input files transferred to execute node
+transfer_input_files = \
+    extract_pixels_aviris_nc.py, \
+    run_extract_pixels.sh, \
+    capetrait_patches_34s2.shp, \
+    capetrait_patches_34s2.shx, \
+    capetrait_patches_34s2.dbf, \
+    capetrait_patches_34s2.prj
+
+should_transfer_files = YES
+when_to_transfer_output = ON_EXIT
+
+# Resources (AVIRIS-NG is memory-heavy)
+request_cpus   = 1
+request_memory = 24GB
+request_disk   = 20GB
+
+# Logging
+log    = logs/extract_pixels.log
+output = logs/extract_pixels_$(Cluster)_$(Process).out
+error  = logs/extract_pixels_$(Cluster)_$(Process).err
+
+# Queue one job per image
+queue IMAGE from retry_images.txt
+
